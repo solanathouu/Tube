@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Tube",
+    "slug": "tube-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tube.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Tube utilise votre position pour afficher les signalements autour de vous et vous aider à naviguer dans le métro parisien.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Tube utilise votre position pour afficher les signalements autour de vous et vous aider à naviguer dans le métro parisien.",
+        "NSContactsUsageDescription": "Tube accède à vos contacts pour vous suggérer des amis déjà sur l'application."
+      }
+    },
+    "android": {
+      "package": "com.tube.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_CONTACTS"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    }
+  }
+}

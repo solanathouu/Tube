@@ -1,0 +1,95 @@
+# Cursor Rules - Projet Tube
+
+## Contexte du projet
+Tube est une application React Native (Expo SDK 54) de signalement collaboratif dans les transports en commun parisiens. Backend : Supabase (PostgreSQL + Auth). API externe : PRIM IDFM.
+
+## Stack technique
+- **Framework** : React Native 0.81 + Expo SDK 54
+- **Navigation** : React Navigation 6 (Stack + Bottom Tabs)
+- **State management** : React Context API (AppContext, ThemeContext)
+- **Backend** : Supabase (Auth + PostgreSQL + RLS)
+- **Langage** : JavaScript (pas TypeScript)
+- **UI** : React Native Paper + MaterialCommunityIcons
+
+## Architecture des dossiers
+```
+src/
+  screens/        → Écrans (un fichier par écran)
+  components/     → Composants réutilisables
+  services/       → Logique métier et appels API/Supabase
+  context/        → Providers Context API (AppContext, ThemeContext)
+  config/         → Configuration (supabase.js, firebase.js)
+  data/           → Données mockées (stations, reports)
+  theme/          → Design system (couleurs, typo, niveaux XP)
+  utils/          → Fonctions utilitaires
+```
+
+## Conventions de code
+
+### Fichiers et nommage
+- Screens : `PascalCase` + suffixe `Screen` → `ProfileScreen.js`
+- Components : `PascalCase` → `ReportCard.js`
+- Services : `camelCase` + suffixe `Service` → `reportsService.js`
+- Fonctions exportées : `camelCase` → `getActiveReports()`
+
+### React Native
+- Utiliser `StyleSheet.create()` pour les styles
+- Styles dynamiques via fonction `getStyles(theme)` retournant `StyleSheet.create()`
+- Utiliser `useMemo` pour les styles dépendant du thème
+- Utiliser `useApp()` pour accéder au contexte global
+- Utiliser `useTheme()` pour accéder au thème
+
+### Services Supabase
+- Chaque service exporte des fonctions async
+- Retourner `{ success: true, data }` ou `{ success: false, error: message }`
+- Toujours gérer les erreurs avec try/catch
+- Logger les erreurs avec `console.error`
+- Importer le client depuis `../config/supabase`
+
+### Sécurité
+- NE JAMAIS mettre de secrets en dur dans le code (utiliser .env)
+- NE JAMAIS utiliser la `service_role_key` côté client
+- Toujours s'appuyer sur les RLS (Row Level Security) de Supabase
+- Utiliser `auth.uid()` dans les policies RLS pour vérifier l'identité
+- Valider les entrées utilisateur avant envoi à Supabase
+
+### Base de données
+- Tables en `snake_case` : `friend_requests`, `live_shares`
+- Colonnes en `snake_case` : `station_name`, `author_id`
+- UUID pour les clés primaires
+- Toujours ajouter des RLS policies sur les nouvelles tables
+- Migrations numérotées : `XXX_description.sql` dans `supabase/migrations/`
+
+### Thème
+- Toujours utiliser `theme.colors.*` pour les couleurs
+- Toujours utiliser `theme.spacing.*` pour les marges/paddings
+- Supporter light et dark mode via ThemeContext
+- Couleurs principales : primary (#2196F3), secondary (#FF9800), success (#4CAF50), danger (#F44336)
+
+## Patterns à suivre
+
+### Créer un nouvel écran
+1. Créer `src/screens/MonEcranScreen.js`
+2. Importer `useTheme` et `useApp`
+3. Utiliser `getStyles(theme)` pour les styles dynamiques
+4. Ajouter la route dans `src/navigation/AppNavigator.js`
+
+### Créer un nouveau service
+1. Créer `src/services/monService.js`
+2. Importer `supabase` depuis `../config/supabase`
+3. Exporter des fonctions async avec try/catch
+4. Retourner `{ success, data/error }`
+
+### Ajouter une table Supabase
+1. Créer une migration `supabase/migrations/XXX_description.sql`
+2. Activer RLS : `ALTER TABLE nom ENABLE ROW LEVEL SECURITY;`
+3. Ajouter les policies SELECT/INSERT/UPDATE/DELETE
+4. Créer le service correspondant dans `src/services/`
+
+## Ce qu'il ne faut PAS faire
+- Ne pas utiliser Redux ou Zustand (on utilise Context API)
+- Ne pas utiliser TypeScript (le projet est en JavaScript)
+- Ne pas créer de fichiers `.tsx` ou `.ts`
+- Ne pas installer de nouvelles dépendances sans justification
+- Ne pas désactiver RLS en production
+- Ne pas stocker de tokens/secrets dans le code source
